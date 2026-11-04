@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+</head>
+<body>
+    <main class="dashboard">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Surveillance de la chaîne du froid</p>
+                <h1>{{ title }}</h1>
+            </div>
+            {% if latest_sensor %}
+                <span class="latest-badge">
+                    <span class="latest-badge__dot" aria-hidden="true"></span>
+                    Dernière donnée reçue :
+                    {{ latest_sensor.dt|date:"d/m/Y à H:i:s"|default:"date inconnue" }}
+                </span>
+            {% endif %}
+        </header>
+
+        <section class="measurements" aria-labelledby="measurements-title">
+            <div class="section-header">
+                <div>
+                    <h2 id="measurements-title">Mesures des capteurs</h2>
+                    <p>Les données les plus récentes apparaissent en premier.</p>
+                </div>
+                <label class="search">
+                    <span class="visually-hidden">Rechercher dans les mesures</span>
+                    <input id="sensor-search" type="search" placeholder="Rechercher une mesure…">
+                </label>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="sensor-table">
+                    <thead>
+                        <tr>
+                            <th>Température</th>
+                            <th>Humidité</th>
+                            <th>Date et heure</th>
+                            <th>État</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sensor in sensors %}
+                            <tr class="sensor-row">
+                                <td>{{ sensor.temp|default_if_none:"-" }}{% if sensor.temp is not None %} °C{% endif %}</td>
+                                <td>{{ sensor.hum|default_if_none:"-" }}{% if sensor.hum is not None %} %{% endif %}</td>
+                                <td>{{ sensor.dt|date:"d/m/Y H:i:s"|default:"-" }}</td>
+                                <td>
+                                    {% if forloop.first %}
+                                        <span class="row-badge">Dernière reçue</span>
+                                    {% else %}
+                                        <span class="status-text">Historique</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td class="empty-state" colspan="4">Aucune mesure disponible.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p id="no-search-results" class="empty-state" hidden>Aucune mesure ne correspond à la recherche.</p>
+            </div>
+        </section>
+    </main>
+    <script src="{% static 'core/js/dashboard.js' %}" defer></script>
+</body>
+</html>
