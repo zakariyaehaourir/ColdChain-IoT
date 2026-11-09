@@ -57,6 +57,49 @@ h2 {
     font-size: 1.15rem;
 }
 
+.site-nav {
+    margin: -8px 0 18px;
+}
+
+.site-nav__link {
+    color: #647783;
+    text-decoration: none;
+}
+
+.site-nav__link:hover,
+.site-nav__link--active {
+    background: #e4f6ef;
+    color: #17684d;
+}
+
+.site-nav__link svg {
+    width: 18px;
+    height: 18px;
+}
+
+.breadcrumbs {
+    margin-bottom: 24px;
+    color: #71818d;
+}
+
+.breadcrumbs a,
+.text-link {
+    color: #168a83;
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover,
+.text-link:hover {
+    color: #106c66;
+    text-decoration: underline;
+}
+
+.text-link {
+    font-size: 0.9rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
 .latest-badge,
 .row-badge {
     display: inline-flex;
@@ -71,6 +114,8 @@ h2 {
 
 .latest-badge {
     padding: 11px 16px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .latest-badge__dot {
@@ -114,34 +159,38 @@ h2 {
     outline: 3px solid rgb(22 138 131 / 15%);
 }
 
-.table-wrapper {
-    overflow-x: auto;
+.measurements-content {
+    padding: 24px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+    gap: 18px;
 }
 
-th,
-td {
-    padding: 16px 24px;
-    white-space: nowrap;
+.sensor-grid--latest {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-th {
-    background: #f8fafb;
-    color: #71818d;
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+.sensor-card {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid #e5edf1;
+    border-radius: 15px;
+    background: #fff;
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-td {
-    border-top: 1px solid #edf1f4;
-    font-size: 0.94rem;
+.sensor-card:hover {
+    transform: translateY(-2px);
+    border-color: #c8dedc;
+    box-shadow: 0 10px 24px rgb(23 43 58 / 7%);
+}
+
+.sensor-card--latest {
+    border-color: #9bd5c0;
+    background: linear-gradient(145deg, #f8fffb, #fff 65%);
 }
 
 .row-badge {
@@ -149,9 +198,140 @@ td {
     font-size: 0.76rem;
 }
 
-.status-text {
+.sensor-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.sensor-card__label,
+.sensor-value__label {
+    color: #71818d;
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.sensor-values {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.sensor-value {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.sensor-value__icon {
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 12px;
+}
+
+.sensor-value__icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.sensor-value__icon--temperature {
+    background: #fff0e8;
+    color: #d76535;
+}
+
+.sensor-value__icon--humidity {
+    background: #e8f4ff;
+    color: #347fb3;
+}
+
+.sensor-value__label,
+.sensor-value__number,
+.sensor-card__date {
+    margin: 0;
+}
+
+.sensor-value__label {
+    font-size: 0.68rem;
+}
+
+.sensor-value__number {
+    margin-top: 0;
+    color: #172b3a;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 720;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+}
+
+.sensor-value__number span {
     color: #71818d;
     font-size: 0.85rem;
+    font-weight: 550;
+    letter-spacing: 0;
+}
+
+.sensor-card__date {
+    margin-top: 18px;
+    color: #71818d;
+    font-size: 0.8rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.history-table th,
+.history-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid #edf1f4;
+    white-space: nowrap;
+}
+
+.history-table th {
+    background: #f8fafb;
+    color: #71818d;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.history-table td {
+    color: #344b5a;
+    font-size: 0.9rem;
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.history-table tbody tr:hover {
+    background: #f8fffb;
+}
+
+.history-status {
+    color: #71818d;
+    font-size: 0.82rem;
+}
+
+.table-empty {
+    padding: 28px 24px !important;
+    color: #71818d !important;
+    text-align: center;
 }
 
 .empty-state {
@@ -195,8 +375,20 @@ td {
         width: 100%;
     }
 
-    th,
-    td {
+    .measurements-content {
+        padding: 16px;
+    }
+
+    .sensor-card {
+        padding: 18px;
+    }
+
+    .sensor-grid--latest {
+        grid-template-columns: 1fr;
+    }
+
+    .history-table th,
+    .history-table td {
         padding: 14px 16px;
     }
 }

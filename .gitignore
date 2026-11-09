@@ -88,6 +88,7 @@ db.sqlite3
 venv/
 ENV/
 .vscode
+node_modules/
 # Spyder project settings
 .spyderproject
 .spyproject

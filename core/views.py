@@ -8,10 +8,18 @@ def test_json_view(request):
 
 
 def home_view(request):
-    sensors = FridgeSensor.objects.all().order_by("-dt")
+    latest_sensor = FridgeSensor.objects.order_by("-dt").first()
     context = {
-        "title": "Fridge Data",
-        "sensors": sensors,
-        "latest_sensor": sensors.first(),
+        "latest_sensor": latest_sensor,
+        "active_page": "dashboard",
     }
     return render(request, "index.html", context)
+
+
+def history_view(request):
+    sensors = FridgeSensor.objects.order_by("-dt")
+    context = {
+        "sensors": sensors,
+        "active_page": "history",
+    }
+    return render(request, "history.html", context)

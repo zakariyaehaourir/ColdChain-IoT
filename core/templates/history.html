@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Historique | Chaîne du froid{% endblock %}
+{% block heading %}Historique des mesures{% endblock %}
+
+{% block content %}
+    <section class="measurements" aria-labelledby="history-title">
+        <div class="section-header">
+            <div>
+                <h2 id="history-title">Toutes les mesures</h2>
+                <p>{{ sensors|length }} mesure{{ sensors|length|pluralize }} enregistrée{{ sensors|length|pluralize }}, de la plus récente à la plus ancienne.</p>
+            </div>
+            <label class="search">
+                <span class="visually-hidden">Rechercher parmi les mesures</span>
+                <input id="sensor-search" type="search" placeholder="Filtrer les mesures…">
+            </label>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Date et heure</th>
+                        <th scope="col">Température</th>
+                        <th scope="col">Humidité</th>
+                        <th scope="col">État</th>
+                    </tr>
+                </thead>
+                <tbody id="history-rows">
+                    {% for sensor in sensors %}
+                        <tr class="history-row">
+                            <td data-label="Date et heure">
+                                <time datetime="{{ sensor.dt|date:'c' }}">{{ sensor.dt|date:"d/m/Y à H:i:s"|default:"Date inconnue" }}</time>
+                            </td>
+                            <td data-label="Température">
+                                {% if sensor.temp is not None %}{{ sensor.temp }} °C{% else %}—{% endif %}
+                            </td>
+                            <td data-label="Humidité">
+                                {% if sensor.hum is not None %}{{ sensor.hum }} %{% else %}—{% endif %}
+                            </td>
+                            <td data-label="État">
+                                {% if forloop.first %}<span class="row-badge">Dernière reçue</span>{% else %}<span class="history-status">Enregistrée</span>{% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="table-empty" colspan="4">Aucune mesure disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p id="no-search-results" class="empty-state" hidden>Aucune mesure ne correspond à la recherche.</p>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'core/js/dashboard.js' %}" defer></script>
+{% endblock %}
