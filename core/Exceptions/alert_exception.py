@@ -1,0 +1,2 @@
+class AlertDispatchError(Exception):
+    pass

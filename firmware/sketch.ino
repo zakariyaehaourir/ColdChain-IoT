@@ -82,7 +82,7 @@ void loop() {
     return;
   }
 
-  http.setTimeout(8000);
+  http.setTimeout(30000);
   http.addHeader("Content-Type", "application/json");
 
   String payload = "{\"temp\":";
