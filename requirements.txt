@@ -3,4 +3,7 @@ djangorestframework
 django-cors-headers
 djangorestframework-simplejwt
 python-dotenv
+requests
 psycopg2-binary
+django-environ
+premailer

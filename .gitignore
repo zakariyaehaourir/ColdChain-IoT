@@ -88,6 +88,7 @@ db.sqlite3
 venv/
 ENV/
 .vscode
+node_modules/
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -107,6 +108,7 @@ media/
 *.pyc
 *.db
 *.pid
+/firmware/secrets.h
 
 # Ignore Django Migrations in Development if you are working on team
 
@@ -114,3 +116,5 @@ media/
 # **/migrations/**
 # !**/migrations
 # !**/migrations/__init__.py
+
+.env

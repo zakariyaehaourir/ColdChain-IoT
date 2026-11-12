@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Surveillance de la chaîne du froid{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'core/img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'core/css/tailwind.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+</head>
+<body>
+    <main class="dashboard">
+        <header class="page-header">
+            <div>
+                <a href="{% url 'home' %}" aria-label="ColdChain - accueil">
+                    <img
+                        src="{% static 'core/img/coldchain-logo-horizontal-light-bg.svg' %}"
+                        alt="ColdChain Temperature Monitoring"
+                        width="220"
+                        height="62"
+                        style="display:block;width:min(220px, 100%);height:auto;margin-bottom:12px;"
+                    >
+                </a>
+                <h1>{% block heading %}{% endblock %}</h1>
+            </div>
+            {% block header_content %}{% endblock %}
+        </header>
+
+        <nav class="site-nav flex flex-wrap items-center gap-2 sm:gap-3" aria-label="Navigation principale">
+            <a class="site-nav__link inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors{% if active_page == 'dashboard' %} site-nav__link--active{% endif %}"
+               href="{% url 'home' %}"{% if active_page == 'dashboard' %} aria-current="page"{% endif %}>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 10 9-7 9 7"></path><path d="M5 9v11h14V9"></path><path d="M9 20v-6h6v6"></path>
+                </svg>
+                Tableau de bord
+            </a>
+            <a class="site-nav__link inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors{% if active_page == 'history' %} site-nav__link--active{% endif %}"
+               href="{% url 'history' %}"{% if active_page == 'history' %} aria-current="page"{% endif %}>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l3 2"></path>
+                </svg>
+                Historique
+            </a>
+        </nav>
+
+        <nav class="breadcrumbs flex items-center gap-2 text-sm" aria-label="Fil d’Ariane">
+            <a href="{% url 'home' %}">Accueil</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{% if active_page == 'history' %}Historique{% else %}Tableau de bord{% endif %}</span>
+        </nav>
+
+        {% block content %}{% endblock %}
+    </main>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
