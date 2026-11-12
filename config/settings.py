@@ -158,5 +158,10 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
+         "core.receivers": {
+                    "handlers": ["console"],
+                    "level": "DEBUG",
+                    "propagate": False,
+                },
     },
 }
