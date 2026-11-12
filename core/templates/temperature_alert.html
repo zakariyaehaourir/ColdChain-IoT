@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Critical Temperature Alert - ColdChain</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#1e293b;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+    {{ temperature }}°C detected, above the {{ threshold }}°C safety limit{% if device_name %} on {{ device_name }}{% endif %}.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f1f5f9;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;">
+          <tr>
+            <td align="center" style="padding:0;background-color:#f4fafd;">
+              <img
+                src="cid:coldchain-banner"
+                width="600"
+                alt="ColdChain Temperature Monitoring"
+                style="display:block;width:100%;max-width:600px;height:auto;border:0;"
+              >
+            </td>
+          </tr>
+          <tr>
+            <td style="height:4px;background-color:#b4232c;font-size:1px;line-height:1px;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:32px 40px 8px;">
+              <span style="display:inline-block;padding:6px 12px;border-radius:20px;background-color:#b4232c;color:#ffffff;font-size:12px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">
+                Critical alert
+              </span>
+              <h1 style="margin:16px 0 0;color:#0b3c5d;font-size:28px;line-height:1.2;">
+                Temperature above limit
+              </h1>
+              <p style="margin:16px 0 0;font-size:16px;line-height:1.6;">
+                Hello{% if recipient_name %} {{ recipient_name }}{% endif %},
+              </p>
+              <p style="margin:12px 0 0;font-size:16px;line-height:1.6;">
+                The monitoring system detected a temperature above the configured safety limit{% if device_name %} on <strong>{{ device_name }}</strong>{% endif %}{% if location %} ({{ location }}){% endif %}.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fff1f2;border-left:4px solid #b4232c;">
+                <tr>
+                  <td style="padding:20px;">
+                    <div style="font-size:12px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">Current reading</div>
+                    <div style="margin-top:4px;color:#b4232c;font-size:48px;font-weight:bold;line-height:1.1;">{{ temperature }}°C</div>
+                    <div style="margin-top:8px;font-size:14px;color:#64748b;">Safety limit: {{ threshold }}°C</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 40px 8px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;">
+                {% if device_name %}
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid #e2e8f0;color:#64748b;">Sensor / fridge</td>
+                  <td align="right" style="padding:12px 0;border-bottom:1px solid #e2e8f0;font-weight:bold;">{{ device_name }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid #e2e8f0;color:#64748b;">Safety limit</td>
+                  <td align="right" style="padding:12px 0;border-bottom:1px solid #e2e8f0;font-weight:bold;">{{ threshold }}°C</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;border-bottom:1px solid #e2e8f0;color:#64748b;">Detected at</td>
+                  <td align="right" style="padding:12px 0;border-bottom:1px solid #e2e8f0;font-weight:bold;">{{ timestamp|date:"Y-m-d H:i" }}</td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;color:#64748b;">System status</td>
+                  <td align="right" style="padding:12px 0;color:#b4232c;font-weight:bold;">Action required</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {% if dashboard_url %}
+          <tr>
+            <td align="center" style="padding:24px 40px 32px;">
+              <a href="{{ dashboard_url }}" style="display:inline-block;padding:14px 28px;border-radius:8px;background-color:#0b3c5d;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;">
+                View dashboard
+              </a>
+              <p style="margin:16px 0 0;color:#64748b;font-size:14px;line-height:1.5;">
+                Check the door seal, compressor, and stored products as soon as possible.
+              </p>
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td align="center" style="padding:24px;background-color:#e0f2fe;color:#64748b;font-size:12px;line-height:1.6;">
+              &copy; {% now "Y" %} ColdChain Alerts Service.<br>
+              This is an automated message; please do not reply.
+              {% if settings_url %}
+              <br><a href="{{ settings_url }}" style="color:#0b3c5d;text-decoration:underline;">Manage alert preferences</a>
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
