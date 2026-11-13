@@ -144,6 +144,9 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = env.int('TELEGRAM_CHAT_ID')
 CRITICAL_TEMPERATURE_THRESHOLD:float=env.float('CRITICAL_TEMPERATURE_THRESHOLD')
+MQTT_BROKER_HOST = env("MQTT_BROKER_HOST", default="localhost")
+MQTT_BROKER_PORT = env.int("MQTT_BROKER_PORT", default=1883)
+MQTT_TOPIC = env("MQTT_TOPIC", default="coldchain/sensors")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -163,5 +166,10 @@ LOGGING = {
                     "level": "DEBUG",
                     "propagate": False,
                 },
+        "core.commands.run_mqtt": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
