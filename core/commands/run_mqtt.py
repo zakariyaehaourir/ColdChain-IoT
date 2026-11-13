@@ -3,7 +3,7 @@ import json
 import paho.mqtt.client as mqtt
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-
+from core.models import FridgeSensor
 from core.dto import SensorReadingDTO
 from core.signals import high_temperature_detected
 
@@ -27,6 +27,7 @@ def on_message(client, userdata, message):
         reading.temp,
         reading.hum,
     )
+    FridgeSensor.objects.create(temp=reading.temp, hum=reading.hum)
     if reading.temp > settings.CRITICAL_TEMPERATURE_THRESHOLD:
         logger.info(
             "Temperature %.1f C exceeded the critical threshold of %.1f C.",
@@ -73,7 +74,7 @@ class Command(BaseCommand):
         try:
             client.connect(broker_host, broker_port, keepalive=60)
             client.loop_forever()
-        except (OSError, mqtt.MQTTException) as exc:
+        except (OSError, Exception) as exc:
             raise CommandError(
                 f"MQTT worker failed while connecting to {broker_host}:{broker_port}: {exc}"
             ) from exc
