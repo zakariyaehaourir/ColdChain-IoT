@@ -1,5 +1,5 @@
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <PubSubClient.h>
 #include <DHT.h>
 #include "secrets.h"
 
@@ -7,6 +7,8 @@
 #define DHTTYPE DHT11
 
 DHT dht(DHTPIN, DHTTYPE);
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
 
 const unsigned long WIFI_TIMEOUT_MS = 20000;
 const unsigned long SEND_INTERVAL_MS = 5000;
@@ -38,11 +40,34 @@ bool connectToWiFi() {
   Serial.println(WiFi.localIP());
   Serial.print("Gateway: ");
   Serial.println(WiFi.gatewayIP());
-  Serial.print("wildmask: ");
+  Serial.print("Subnet mask: ");
   Serial.println(WiFi.subnetMask());
-  Serial.printf("Signal Wi-Fi: %d dBm\n", WiFi.RSSI());
-  Serial.printf("Remote Server: %s\n", SERVER_URL);
+  Serial.printf("Wi-Fi signal: %d dBm\n", WiFi.RSSI());
+  Serial.printf(
+      "MQTT broker: %s:%u\n",
+      MQTT_BROKER_HOST,
+      static_cast<unsigned int>(MQTT_BROKER_PORT));
   return true;
+}
+
+bool connectToMqtt() {
+  if (mqttClient.connected()) {
+    return true;
+  }
+
+  String clientId = "ColdChainESP8266-";
+  clientId += String(ESP.getChipId(), HEX);
+
+  Serial.printf("Connecting to MQTT broker %s:%u...\n",
+                MQTT_BROKER_HOST,
+                static_cast<unsigned int>(MQTT_BROKER_PORT));
+  if (mqttClient.connect(clientId.c_str())) {
+    Serial.println("Connected to MQTT broker.");
+    return true;
+  }
+
+  Serial.printf("MQTT connection failed with state %d.\n", mqttClient.state());
+  return false;
 }
 
 void setup() {
@@ -52,6 +77,7 @@ void setup() {
   Serial.println("Starting ESP capture...");
 
   dht.begin();
+  mqttClient.setServer(MQTT_BROKER_HOST, MQTT_BROKER_PORT);
   connectToWiFi();
 }
 
@@ -60,6 +86,13 @@ void loop() {
     delay(SEND_INTERVAL_MS);
     return;
   }
+
+  if (!connectToMqtt()) {
+    delay(SEND_INTERVAL_MS);
+    return;
+  }
+
+  mqttClient.loop();
 
   const float temperature = dht.readTemperature();
   const float humidity = dht.readHumidity();
@@ -73,39 +106,21 @@ void loop() {
   Serial.printf("Temp: %.1f C | Hum: %.1f %%\n",
                 temperature, humidity);
 
-  WiFiClient client;
-  HTTPClient http;
+  char payload[64];
+  snprintf(
+      payload,
+      sizeof(payload),
+      "{\"temp\":%.1f,\"hum\":%.1f}",
+      temperature,
+      humidity);
 
-  if (!http.begin(client, SERVER_URL)) {
-    Serial.println("Error HTTP: cannot etablish a connexion.");
-    delay(SEND_INTERVAL_MS);
-    return;
-  }
-
-  http.setTimeout(30000);
-  http.addHeader("Content-Type", "application/json");
-
-  String payload = "{\"temp\":";
-  payload += String(temperature, 1);
-  payload += ",\"hum\":";
-  payload += String(humidity, 1);
-  payload += "}";
-
-  Serial.printf("POST %s\n", SERVER_URL);
-  Serial.printf("JSON: %s\n", payload.c_str());
-
-  const int httpCode = http.POST(payload);
-  if (httpCode > 0) {
-    Serial.printf("HTTP Response: %d\n", httpCode);
-    Serial.printf("BODY: %s\n", http.getString().c_str());
-    if (httpCode < 200 || httpCode >= 300) {
-      Serial.println("500 Error from the server");
-    }
+  if (mqttClient.publish(MQTT_TOPIC, payload)) {
+    Serial.printf("Published to topic %s: %s\n", MQTT_TOPIC, payload);
   } else {
-    Serial.printf("HTTP Error: %s (code %d)\n",
-                  http.errorToString(httpCode).c_str(), httpCode);
+    Serial.printf("Failed to publish to topic %s (MQTT state %d).\n",
+                  MQTT_TOPIC, mqttClient.state());
   }
 
-  http.end();
+  mqttClient.loop();
   delay(SEND_INTERVAL_MS);
 }

@@ -1,0 +1,52 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt_broker
+    ports:
+      - "1883:1883" # Port MQTT
+      - "9001:9001"
+    volumes:
+      - ./infra/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: unless-stopped
+    networks:
+      - iot_network
+
+  web:
+    build:
+      context: .
+      dockerfile: ./infra/Dockerfile
+    
+    container_name: django_web
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+    networks:
+      - iot_network
+
+  # Worker MQTT 
+  mqtt_listener:
+    build:
+      context: .
+      dockerfile: ./infra/Dockerfile
+    container_name: django_mqtt_worker
+    command: python manage.py run_mqtt
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - mosquitto
+      - web 
+    restart: always
+    networks:
+      - iot_network
+
+networks:
+  iot_network:
+    driver: bridge
